@@ -1,0 +1,54 @@
+---
+import { copies, getCopy } from "../../content";
+import { facts } from "../../content/facts";
+import { localePath, locales, switchedPath, type Locale } from "../lib/locales";
+
+interface Props {
+  lang: Locale;
+  section: "home" | "about" | "services" | "insights" | "contact" | "privacy" | "none";
+  languageHome?: boolean;
+}
+
+const { lang, section, languageHome = false } = Astro.props;
+const copy = getCopy(lang);
+const brand = lang === "he" ? facts.nameHe : facts.name;
+const primaryLabel = lang === "he" ? "ראשי" : lang === "nl" ? "Hoofdmenu" : "Primary";
+const items = [
+  ["about", copy.nav.about],
+  ["services", copy.nav.services],
+  ["insights", copy.nav.insights],
+  ["contact", copy.nav.contact],
+] as const;
+---
+
+<header class="site-header">
+  <div class="accent-bar" aria-hidden="true"></div>
+  <div class="wrap header-inner">
+    <a class="brand" href={localePath(lang)} aria-current={section === "home" ? "page" : undefined}>
+      {brand}
+    </a>
+    <nav class="primary-nav" aria-label={primaryLabel}>
+      {
+        items.map(([key, label]) => (
+          <a href={localePath(lang, `/${key}`)} aria-current={section === key ? "page" : undefined}>
+            {label}
+          </a>
+        ))
+      }
+    </nav>
+    <nav class="langs" aria-label={copy.ui.languageLabel}>
+      {
+        locales.map((code) => (
+          <a
+            href={languageHome ? localePath(code) : switchedPath(Astro.url.pathname, code)}
+            hreflang={code}
+            lang={code}
+            aria-current={code === lang ? "true" : undefined}
+          >
+            {copies[code].langName}
+          </a>
+        ))
+      }
+    </nav>
+  </div>
+</header>

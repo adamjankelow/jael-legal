@@ -1,0 +1,35 @@
+---
+const target = `${import.meta.env.BASE_URL}en/`;
+const canonical = new URL(target, Astro.site ?? "https://adamjankelow.github.io").href;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex" />
+    <title>Jael Tahan</title>
+    <link rel="canonical" href={canonical} />
+    <meta http-equiv="refresh" content={`0;url=${target}`} />
+    <link rel="icon" href={`${import.meta.env.BASE_URL}favicon.svg`} type="image/svg+xml" />
+    <style>
+      body {
+        margin: 0;
+        min-height: 100vh;
+        display: grid;
+        place-items: center;
+        background: #f7f5f1;
+        color: #12141a;
+        font-family: Palatino, "Palatino Linotype", Georgia, serif;
+      }
+      a {
+        color: #1b3a4b;
+        font-size: 1.5rem;
+      }
+    </style>
+  </head>
+  <body>
+    <p><a href={target}>Jael Tahan</a></p>
+  </body>
+</html>

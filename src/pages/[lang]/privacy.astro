@@ -1,0 +1,37 @@
+---
+import Base from "../../layouts/Base.astro";
+import Blocks from "../../components/Blocks.astro";
+import { facts } from "../../../content/facts";
+import { getCopy } from "../../../content";
+import { localeStaticPaths, type Locale } from "../../lib/locales";
+import { formatIsoDate } from "../../lib/dates";
+
+export function getStaticPaths() {
+  return localeStaticPaths();
+}
+
+const lang = Astro.params.lang as Locale;
+const copy = getCopy(lang);
+const brand = lang === "he" ? facts.nameHe : facts.name;
+---
+
+<Base
+  lang={lang}
+  title={`${copy.privacy.title} — ${brand}`}
+  description={copy.meta.privacy}
+  path="/privacy"
+  section="privacy"
+>
+  <header class="page-head wrap">
+    <p class="kicker">{brand}</p>
+    <h1>{copy.privacy.title}</h1>
+    <p class="meta-line">
+      {copy.privacy.updatedLabel}
+      {" "}
+      <time datetime={facts.published}>{formatIsoDate(facts.published, lang)}</time>
+    </p>
+  </header>
+  <div class="page-block wrap">
+    <Blocks blocks={copy.privacy.blocks} />
+  </div>
+</Base>

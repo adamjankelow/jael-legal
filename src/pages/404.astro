@@ -1,0 +1,29 @@
+---
+import Base from "../layouts/Base.astro";
+import { getCopy } from "../../content";
+import { localePath } from "../lib/locales";
+
+const en = getCopy("en");
+const he = getCopy("he");
+const nl = getCopy("nl");
+---
+
+<Base
+  lang="en"
+  title={`${en.notFound.title} — Jael Tahan`}
+  description={en.notFound.lede}
+  path="/"
+  section="none"
+  indexable={false}
+  languageHome={true}
+>
+  <header class="page-head wrap">
+    <h1>{en.notFound.title}</h1>
+    <p class="lede">{en.notFound.lede}</p>
+    <div class="not-found-links">
+      <a href={localePath("en")}>{en.langName}</a>
+      <a href={localePath("he")} lang="he" dir="rtl">{he.notFound.title}</a>
+      <a href={localePath("nl")} lang="nl">{nl.notFound.title}</a>
+    </div>
+  </header>
+</Base>

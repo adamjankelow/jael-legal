@@ -1,0 +1,74 @@
+---
+import "../styles/global.css";
+import Header from "../components/Header.astro";
+import Footer from "../components/Footer.astro";
+import HebrewFonts from "../components/HebrewFonts.astro";
+import { getCopy } from "../../content";
+import { localePath, locales, type Locale } from "../lib/locales";
+
+interface Props {
+  lang: Locale;
+  title: string;
+  description: string;
+  path: string;
+  section: "home" | "about" | "services" | "insights" | "contact" | "privacy" | "none";
+  indexable?: boolean;
+  ogType?: "website" | "article";
+  languageHome?: boolean;
+}
+
+const {
+  lang,
+  title,
+  description,
+  path,
+  section,
+  indexable = true,
+  ogType = "website",
+  languageHome = false,
+} = Astro.props;
+
+const copy = getCopy(lang);
+const dir = lang === "he" ? "rtl" : "ltr";
+const origin = Astro.site ?? new URL("https://adamjankelow.github.io");
+const canonical = new URL(localePath(lang, path), origin).href;
+const ogLocale = lang === "he" ? "he_IL" : lang === "nl" ? "nl_NL" : "en_US";
+const alternates = locales.map((code) => ({
+  code,
+  href: new URL(localePath(code, path), origin).href,
+}));
+---
+
+<!doctype html>
+<html lang={lang} dir={dir}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <meta name="author" content="Jael Tahan" />
+    <meta name="theme-color" content="#F7F5F1" />
+    {indexable ? <link rel="canonical" href={canonical} /> : <meta name="robots" content="noindex" />}
+    {
+      indexable &&
+        alternates.map((item) => <link rel="alternate" hreflang={item.code} href={item.href} />)
+    }
+    {indexable && <link rel="alternate" hreflang="x-default" href={alternates[0].href} />}
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content={ogType} />
+    {indexable && <meta property="og:url" content={canonical} />}
+    <meta property="og:locale" content={ogLocale} />
+    <meta name="twitter:card" content="summary" />
+    <link rel="icon" href={`${import.meta.env.BASE_URL}favicon.svg`} type="image/svg+xml" />
+    {lang === "he" && <HebrewFonts />}
+  </head>
+  <body>
+    <a class="skip" href="#content">{copy.ui.skip}</a>
+    <Header lang={lang} section={section} languageHome={languageHome} />
+    <main id="content" tabindex="-1">
+      <slot />
+    </main>
+    <Footer lang={lang} />
+  </body>
+</html>
