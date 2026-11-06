@@ -1,0 +1,91 @@
+---
+import Base from "../../layouts/Base.astro";
+import { contactLinks } from "../../../content/contact";
+import { facts } from "../../../content/facts";
+import { getCopy } from "../../../content";
+import { localeStaticPaths, type Locale } from "../../lib/locales";
+
+export function getStaticPaths() {
+  return localeStaticPaths();
+}
+
+const lang = Astro.params.lang as Locale;
+const copy = getCopy(lang);
+const brand = lang === "he" ? facts.nameHe : facts.name;
+const links = contactLinks();
+---
+
+<Base
+  lang={lang}
+  title={`${copy.contact.title} — ${brand}`}
+  description={copy.meta.contact}
+  path="/contact"
+  section="contact"
+>
+  <header class="page-head wrap">
+    <p class="kicker">{brand}</p>
+    <h1>{copy.contact.title}</h1>
+    <p class="lede">{copy.contact.lede}</p>
+  </header>
+
+  <div class="page-block wrap">
+    <ul class="channels">
+      <li>
+        {
+          links.calendly ? (
+            <a href={links.calendly} rel="noopener noreferrer" target="_blank">
+              <span class="channel-label">{copy.ui.schedule}</span>
+              <span class="channel-detail">
+                {copy.ui.scheduleReady}
+                <span class="visually-hidden"> ({copy.ui.newTab})</span>
+              </span>
+            </a>
+          ) : (
+            <div class="channel">
+              <span class="channel-label">{copy.ui.schedule}</span>
+              <span class="channel-detail">{copy.ui.scheduleMissing}</span>
+            </div>
+          )
+        }
+      </li>
+      <li>
+        {
+          links.whatsappHref ? (
+            <a href={links.whatsappHref} rel="noopener noreferrer" target="_blank">
+              <span class="channel-label">{copy.ui.whatsapp}</span>
+              <span class="channel-detail" dir="ltr">
+                +{links.whatsapp}
+                <span class="visually-hidden"> ({copy.ui.newTab})</span>
+              </span>
+            </a>
+          ) : (
+            <div class="channel">
+              <span class="channel-label">{copy.ui.whatsapp}</span>
+              <span class="channel-detail">{copy.ui.whatsappMissing}</span>
+            </div>
+          )
+        }
+      </li>
+      <li>
+        {
+          links.mailto ? (
+            <a href={links.mailto}>
+              <span class="channel-label">{copy.ui.email}</span>
+              <span class="channel-detail" dir="ltr">
+                {links.email}
+              </span>
+            </a>
+          ) : (
+            <div class="channel">
+              <span class="channel-label">{copy.ui.email}</span>
+              <span class="channel-detail">{copy.ui.emailMissing}</span>
+            </div>
+          )
+        }
+      </li>
+    </ul>
+    <p class="aside-copy">{copy.contact.timezone}</p>
+    <p class="aside-copy">{copy.contact.languages}</p>
+    <p class="aside-copy">{copy.contact.noForm}</p>
+  </div>
+</Base>

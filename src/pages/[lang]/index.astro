@@ -1,0 +1,144 @@
+---
+import Base from "../../layouts/Base.astro";
+import Portrait from "../../components/Portrait.astro";
+import { facts } from "../../../content/facts";
+import { getCopy } from "../../../content";
+import { localeStaticPaths, localePath, type Locale } from "../../lib/locales";
+import { minutesLabel, pad, postPlainText } from "../../lib/format";
+import { formatIsoDate, readingMinutes } from "../../lib/dates";
+
+export function getStaticPaths() {
+  return localeStaticPaths();
+}
+
+const lang = Astro.params.lang as Locale;
+const copy = getCopy(lang);
+const brand = lang === "he" ? facts.nameHe : facts.name;
+const lead = copy.services.items.filter((item) => item.lead);
+const rest = copy.services.items.filter((item) => !item.lead);
+const origin = Astro.site ?? new URL("https://adamjankelow.github.io");
+const canonical = new URL(localePath(lang), origin).href;
+const jobTitle = lang === "he" ? "עורכת דין" : lang === "nl" ? "Juridisch adviseur" : "Lawyer";
+const ld = JSON.stringify({
+  "@context": "https://schema.org",
+  "@type": "Person",
+  name: facts.name,
+  alternateName: facts.nameHe,
+  jobTitle,
+  inLanguage: lang,
+  url: canonical,
+  address: {
+    "@type": "PostalAddress",
+    addressLocality: "Tel Aviv",
+    addressCountry: "IL",
+  },
+  knowsLanguage: ["en", "he", "nl"],
+  sameAs: [facts.linkedin],
+  description: copy.meta.description,
+}).replace(/</g, "\\u003c");
+---
+
+<Base
+  lang={lang}
+  title={copy.meta.homeTitle}
+  description={copy.meta.description}
+  path="/"
+  section="home"
+>
+  <section class="hero wrap">
+    <Portrait caption={copy.ui.portraitCaption} alt={copy.ui.portraitAlt} />
+    <div class="hero-copy">
+      <p class="kicker">{copy.home.kicker}</p>
+      <h1>{brand}</h1>
+      <p class="tagline">{copy.home.tagline}</p>
+      <p class="lede">{copy.home.lede}</p>
+      <a class="button" href={localePath(lang, "/contact")}>{copy.ui.cta}</a>
+    </div>
+  </section>
+
+  <section class="section wrap">
+    <div class="split">
+      <h2>{copy.home.introTitle}</h2>
+      <p class="lede">{copy.home.intro}</p>
+    </div>
+  </section>
+
+  <section class="section wrap" aria-labelledby="services-title">
+    <div class="split">
+      <h2 id="services-title">{copy.home.servicesTitle}</h2>
+      <p class="lede">{copy.home.servicesLede}</p>
+    </div>
+    <ol class="index-list">
+      {
+        lead.map((item, index) => (
+          <li>
+            <span class="num" aria-hidden="true">
+              {pad(index + 1)}
+            </span>
+            <div>
+              <h3>
+                <a href={localePath(lang, `/services#${item.id}`)}>{item.title}</a>
+              </h3>
+              <p>{item.summary}</p>
+            </div>
+          </li>
+        ))
+      }
+    </ol>
+  </section>
+
+  <section class="section wrap" aria-labelledby="other-title">
+    <div class="split">
+      <h2 id="other-title">{copy.home.otherTitle}</h2>
+      <p class="lede">{copy.home.otherLede}</p>
+    </div>
+    <ol class="index-list flat">
+      {
+        rest.map((item) => (
+          <li>
+            <div>
+              <h3>
+                <a href={localePath(lang, `/services#${item.id}`)}>{item.title}</a>
+              </h3>
+              <p>{item.summary}</p>
+            </div>
+          </li>
+        ))
+      }
+    </ol>
+  </section>
+
+  <section class="section wrap" aria-labelledby="notes-title">
+    <div class="split">
+      <h2 id="notes-title">{copy.home.notesTitle}</h2>
+      <p class="lede">{copy.home.notesLede}</p>
+    </div>
+    <ol class="index-list flat">
+      {
+        copy.insights.posts.map((post) => (
+          <li>
+            <div>
+              <h3>
+                <a href={localePath(lang, `/insights/${post.slug}`)}>{post.title}</a>
+              </h3>
+              <p>{post.description}</p>
+              <p class="meta-line">
+                <time datetime={facts.published}>{formatIsoDate(facts.published, lang)}</time>
+                {" · "}
+                {minutesLabel(lang, readingMinutes(postPlainText(post)))}
+              </p>
+            </div>
+          </li>
+        ))
+      }
+    </ol>
+  </section>
+
+  <section class="close-band">
+    <div class="wrap">
+      <p>{copy.home.close}</p>
+      <a class="button button-invert" href={localePath(lang, "/contact")}>{copy.ui.cta}</a>
+    </div>
+  </section>
+  <script type="application/ld+json" set:html={ld} />
+</Base>

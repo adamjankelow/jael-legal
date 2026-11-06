@@ -1,0 +1,114 @@
+---
+import Base from "../../layouts/Base.astro";
+import { facts } from "../../../content/facts";
+import { getCopy } from "../../../content";
+import { localeStaticPaths, type Locale } from "../../lib/locales";
+import { barMembership } from "../../lib/format";
+import { formatRange } from "../../lib/dates";
+import { pad } from "../../lib/format";
+
+export function getStaticPaths() {
+  return localeStaticPaths();
+}
+
+const lang = Astro.params.lang as Locale;
+const copy = getCopy(lang);
+const brand = lang === "he" ? facts.nameHe : facts.name;
+const [before, after] = copy.about.publication.split("{link}");
+---
+
+<Base
+  lang={lang}
+  title={`${copy.about.title} — ${brand}`}
+  description={copy.meta.about}
+  path="/about"
+  section="about"
+>
+  <header class="page-head wrap">
+    <p class="kicker">{brand}</p>
+    <h1>{copy.about.title}</h1>
+    <p class="lede">{copy.about.lede}</p>
+    <p class="bar-line">{barMembership(copy, facts.barAdmissionYear)}</p>
+  </header>
+
+  <div class="page-block wrap plain">
+    {copy.about.paragraphs.map((paragraph) => <p>{paragraph}</p>)}
+  </div>
+
+  <section class="page-block wrap" aria-labelledby="experience-title">
+    <h2 class="block-title" id="experience-title">{copy.about.experienceTitle}</h2>
+    <ol class="timeline">
+      {
+        facts.timeline.map((item) => (
+          <li>
+            <p class="when">{formatRange(item.start, item.end, lang, copy.ui.present)}</p>
+            <div>
+              <p class="role">{copy.about.roles[item.id]}</p>
+              <p class="org" dir="ltr" lang="en">
+                {item.org}
+              </p>
+            </div>
+          </li>
+        ))
+      }
+    </ol>
+  </section>
+
+  <section class="page-block wrap" aria-labelledby="education-title">
+    <h2 class="block-title" id="education-title">{copy.about.educationTitle}</h2>
+    <ol class="edu">
+      {
+        facts.education.map((item) => (
+          <li>
+            <p class="when" dir="ltr">
+              {item.years}
+            </p>
+            <div>
+              <p class="credential" dir="ltr" lang="en">
+                {item.credential}
+              </p>
+              <p class="org" dir="ltr" lang="en">
+                {item.org}
+              </p>
+            </div>
+          </li>
+        ))
+      }
+    </ol>
+  </section>
+
+  <section class="page-block wrap" aria-labelledby="writing-title">
+    <h2 class="block-title" id="writing-title">{copy.about.writingTitle}</h2>
+    <p class="plain">
+      {before}<a href={facts.publication.url} rel="noopener noreferrer" target="_blank">
+        {copy.about.publicationLink}<span class="visually-hidden"> ({copy.ui.newTab})</span>
+      </a>{after}
+    </p>
+    <p class="plain">
+      <a href={facts.linkedin} rel="me noopener noreferrer" target="_blank">
+        {copy.ui.profileLabel}<span class="visually-hidden"> ({copy.ui.newTab})</span>
+      </a>
+    </p>
+  </section>
+
+  <section class="page-block wrap" aria-labelledby="how-title">
+    <h2 class="block-title" id="how-title">{copy.about.howTitle}</h2>
+    <ol class="steps numbered">
+      {
+        copy.about.how.map((item, index) => (
+          <li>
+            <span class="label">{pad(index + 1)}</span>
+            {item}
+          </li>
+        ))
+      }
+    </ol>
+  </section>
+
+  <section class="page-block wrap" aria-labelledby="limits-title">
+    <h2 class="block-title" id="limits-title">{copy.about.limitsTitle}</h2>
+    <ul class="steps">
+      {copy.about.limits.map((item) => <li>{item}</li>)}
+    </ul>
+  </section>
+</Base>

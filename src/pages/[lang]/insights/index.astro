@@ -1,0 +1,51 @@
+---
+import Base from "../../../layouts/Base.astro";
+import { facts } from "../../../../content/facts";
+import { getCopy } from "../../../../content";
+import { localeStaticPaths, localePath, type Locale } from "../../../lib/locales";
+import { formatIsoDate, readingMinutes } from "../../../lib/dates";
+import { minutesLabel, postPlainText } from "../../../lib/format";
+
+export function getStaticPaths() {
+  return localeStaticPaths();
+}
+
+const lang = Astro.params.lang as Locale;
+const copy = getCopy(lang);
+const brand = lang === "he" ? facts.nameHe : facts.name;
+---
+
+<Base
+  lang={lang}
+  title={`${copy.insights.title} — ${brand}`}
+  description={copy.meta.insights}
+  path="/insights"
+  section="insights"
+>
+  <header class="page-head wrap">
+    <p class="kicker">{brand}</p>
+    <h1>{copy.insights.title}</h1>
+    <p class="lede">{copy.insights.lede}</p>
+  </header>
+  <div class="page-block wrap">
+    <ol class="index-list flat">
+      {
+        copy.insights.posts.map((post) => (
+          <li>
+            <div>
+              <h3>
+                <a href={localePath(lang, `/insights/${post.slug}`)}>{post.title}</a>
+              </h3>
+              <p>{post.description}</p>
+              <p class="meta-line">
+                <time datetime={facts.published}>{formatIsoDate(facts.published, lang)}</time>
+                {" · "}
+                {minutesLabel(lang, readingMinutes(postPlainText(post)))}
+              </p>
+            </div>
+          </li>
+        ))
+      }
+    </ol>
+  </div>
+</Base>

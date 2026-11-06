@@ -1,0 +1,27 @@
+---
+import { facts } from "../../content/facts";
+import { withBase } from "../lib/locales";
+
+interface Props {
+  caption: string;
+  alt: string;
+}
+
+const { caption, alt } = Astro.props;
+const src = facts.portraitSrc;
+---
+
+<figure class="portrait">
+  {
+    src ? (
+      <img src={withBase(src)} alt={alt} width="700" height="875" />
+    ) : (
+      <div class="portrait-frame" aria-hidden="true">
+        <span class="portrait-mark" dir="ltr">
+          JT
+        </span>
+      </div>
+    )
+  }
+  <figcaption>{caption}</figcaption>
+</figure>

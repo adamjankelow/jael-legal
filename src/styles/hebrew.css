@@ -1,0 +1,57 @@
+@import "@fontsource/ibm-plex-sans-hebrew/hebrew-400.css";
+@import "@fontsource/ibm-plex-sans-hebrew/hebrew-500.css";
+@import "@fontsource/ibm-plex-sans-hebrew/hebrew-600.css";
+
+html[lang="he"] body {
+  font-family: "IBM Plex Sans Hebrew", "Source Sans 3 Variable", sans-serif;
+  line-height: 1.75;
+}
+
+html[lang="he"] .brand,
+html[lang="he"] .hero h1,
+html[lang="he"] .tagline,
+html[lang="he"] .page-head h1,
+html[lang="he"] .prose-page h1,
+html[lang="he"] .split h2,
+html[lang="he"] .block-title,
+html[lang="he"] .index-list h3,
+html[lang="he"] .service h3,
+html[lang="he"] .clauses h3,
+html[lang="he"] .prose h2,
+html[lang="he"] .role,
+html[lang="he"] .credential,
+html[lang="he"] .channel-label,
+html[lang="he"] .footer-name,
+html[lang="he"] .close-band p,
+html[lang="he"] .not-found-links a,
+html[lang="he"] .num,
+html[lang="he"] .portrait-mark {
+  font-family: "IBM Plex Sans Hebrew", sans-serif;
+  font-style: normal;
+  letter-spacing: 0;
+}
+
+html[lang="he"] .tagline,
+html[lang="he"] .clauses h3,
+html[lang="he"] .close-band p {
+  font-weight: 500;
+}
+
+html[lang="he"] .kicker,
+html[lang="he"] .label,
+html[lang="he"] .portrait figcaption {
+  letter-spacing: 0;
+  text-transform: none;
+  font-size: 0.95rem;
+  font-weight: 500;
+}
+
+html[lang="he"] .hero h1 {
+  line-height: 1.05;
+}
+
+html[lang="he"] .page-head h1,
+html[lang="he"] .prose-page h1 {
+  max-width: 22ch;
+  line-height: 1.15;
+}

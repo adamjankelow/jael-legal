@@ -1,0 +1,46 @@
+---
+import type { Service } from "../../content/types";
+
+interface Props {
+  service: Service;
+  number: string;
+  included: string;
+  excluded: string;
+  audience: string;
+  checklistHref?: string;
+  checklistLabel?: string;
+}
+
+const { service, number, included, excluded, audience, checklistHref, checklistLabel } = Astro.props;
+---
+
+<article class="service" id={service.id}>
+  <span class="num" aria-hidden="true">{number}</span>
+  <div>
+    <h3>{service.title}</h3>
+    <p class="summary">{service.summary}</p>
+    <p class="label">{audience}</p>
+    <p class="audience">{service.audience}</p>
+    <div class="scope">
+      <div>
+        <h4 class="label">{included}</h4>
+        <ul>
+          {service.included.map((item) => <li>{item}</li>)}
+        </ul>
+      </div>
+      <div>
+        <h4 class="label">{excluded}</h4>
+        <ul>
+          {service.excluded.map((item) => <li>{item}</li>)}
+        </ul>
+      </div>
+    </div>
+    {
+      checklistHref && checklistLabel && (
+        <p class="more-link">
+          <a href={checklistHref}>{checklistLabel}</a>
+        </p>
+      )
+    }
+  </div>
+</article>

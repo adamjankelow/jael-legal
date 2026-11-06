@@ -1,0 +1,100 @@
+---
+import Base from "../../layouts/Base.astro";
+import ServiceBlock from "../../components/ServiceBlock.astro";
+import { facts } from "../../../content/facts";
+import { getCopy } from "../../../content";
+import { localeStaticPaths, type Locale } from "../../lib/locales";
+import { pad } from "../../lib/format";
+
+export function getStaticPaths() {
+  return localeStaticPaths();
+}
+
+const lang = Astro.params.lang as Locale;
+const copy = getCopy(lang);
+const brand = lang === "he" ? facts.nameHe : facts.name;
+const lead = copy.services.items.filter((item) => item.lead);
+const rest = copy.services.items.filter((item) => !item.lead);
+---
+
+<Base
+  lang={lang}
+  title={`${copy.services.title} — ${brand}`}
+  description={copy.meta.services}
+  path="/services"
+  section="services"
+>
+  <header class="page-head wrap">
+    <p class="kicker">{brand}</p>
+    <h1>{copy.services.title}</h1>
+    <p class="lede">{copy.services.lede}</p>
+    <nav class="page-toc" aria-label={copy.ui.onThisPage}>
+      <p class="kicker">{copy.ui.onThisPage}</p>
+      <ol>
+        {
+          copy.services.items.map((item) => (
+            <li>
+              <a href={`#${item.id}`}>{item.title}</a>
+            </li>
+          ))
+        }
+        <li><a href="#ai-checklist">{copy.services.checklistTitle}</a></li>
+      </ol>
+    </nav>
+  </header>
+
+  <div class="page-block wrap">
+    {
+      lead.map((service, index) => (
+        <ServiceBlock
+          service={service}
+          number={pad(index + 1)}
+          included={copy.ui.included}
+          excluded={copy.ui.excluded}
+          audience={copy.ui.audience}
+          checklistHref={service.id === "ai-procurement" ? "#ai-checklist" : undefined}
+          checklistLabel={service.id === "ai-procurement" ? copy.ui.checklistLink : undefined}
+        />
+      ))
+    }
+  </div>
+
+  <section class="page-block wrap checklist" id="ai-checklist" aria-labelledby="checklist-title">
+    <p class="kicker">{copy.services.checklistEyebrow}</p>
+    <h2 class="block-title" id="checklist-title">{copy.services.checklistTitle}</h2>
+    <p class="lede">{copy.services.checklistIntro}</p>
+    <ol class="clauses">
+      {
+        copy.services.checklist.map((item, index) => (
+          <li>
+            <span class="clause-num" aria-hidden="true">
+              {pad(index + 1)}
+            </span>
+            <div>
+              <h3>{item.title}</h3>
+              <p>{item.text}</p>
+            </div>
+          </li>
+        ))
+      }
+    </ol>
+  </section>
+
+  <section class="page-block wrap" aria-labelledby="narrow-title">
+    <div class="split">
+      <h2 class="block-title" id="narrow-title">{copy.services.otherTitle}</h2>
+      <p class="lede">{copy.services.otherLede}</p>
+    </div>
+    {
+      rest.map((service, index) => (
+        <ServiceBlock
+          service={service}
+          number={pad(lead.length + index + 1)}
+          included={copy.ui.included}
+          excluded={copy.ui.excluded}
+          audience={copy.ui.audience}
+        />
+      ))
+    }
+  </section>
+</Base>

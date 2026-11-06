@@ -1,0 +1,26 @@
+---
+import { getCopy } from "../../content";
+import { facts } from "../../content/facts";
+import { localePath, type Locale } from "../lib/locales";
+
+interface Props {
+  lang: Locale;
+}
+
+const { lang } = Astro.props;
+const copy = getCopy(lang);
+const brand = lang === "he" ? facts.nameHe : facts.name;
+const year = facts.published.slice(0, 4);
+---
+
+<footer class="site-footer">
+  <div class="wrap">
+    <p class="footer-name">{brand}</p>
+    <p class="footer-location">{copy.footer.location}</p>
+    <p class="disclaimer">{copy.footer.disclaimer}</p>
+    <div class="footer-meta">
+      <a href={localePath(lang, "/privacy")}>{copy.nav.privacy}</a>
+      <span dir="ltr">© {year} {facts.name}</span>
+    </div>
+  </div>
+</footer>
